@@ -90,7 +90,7 @@ class DataCleaner:
 
         result = df.copy()
         for c in cols:
-            result[c] = result[c].str.strip()
+            result[c] = result[c].astype(str).str.strip()
         return result
 
     def remove_outliers_iqr(
@@ -133,8 +133,8 @@ class DataCleaner:
         if not pdt.is_numeric_dtype(df[col]):
             raise TypeError(f"Column '{col}' must be numeric to compute IQR")
 
-        q1 = df[col].quantile(0.25)
-        q3 = df[col].quantile(0.75)
+        q1 = df[col].quantile(0.25, interpolation='midpoint')
+        q3 = df[col].quantile(0.75, interpolation='midpoint')
         iqr = q3 - q1
         lower = q1 - factor * iqr
         upper = q3 + factor * iqr
